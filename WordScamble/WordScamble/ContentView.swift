@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var usedWords = [String]()
+    @State private var totalLetters = 0
     @State private var rootWord = ""
     @State private var newWord = ""
     @State private var errorTitle = ""
@@ -16,6 +17,8 @@ struct ContentView: View {
     @State private var showingError = false
     
     var body: some View {
+        Text("Found \(usedWords.count) words containing \(totalLetters) letters!")
+        
         NavigationStack {
             List {
                 Section {
@@ -43,14 +46,18 @@ struct ContentView: View {
             } message: {
                 Text(errorMessage)
             }
+            .toolbar(){
+                Button("Start New Game") {startGame()}
+            }
         }
+        
 
     }
     
     func addNewWord() {
         let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
-        guard answer.count > 0 else {return}
+        guard answer.count >= 3 && answer != rootWord else {return}
         
         
         guard isOriginal(word: answer) else {
@@ -72,6 +79,7 @@ struct ContentView: View {
             usedWords.insert(answer, at: 0)
         }
 
+        totalLetters += answer.count
         newWord = ""
 
     }
@@ -88,6 +96,8 @@ struct ContentView: View {
                 rootWord = allWords.randomElement() ?? "silkworm"
 
                 // If we are here everything has worked, so we can exit
+                totalLetters = 0
+                usedWords = [String]()
                 return
             }
         }
