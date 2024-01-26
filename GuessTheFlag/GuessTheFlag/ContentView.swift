@@ -19,6 +19,10 @@ struct ContentView: View {
     @State private var scoreMessage = ""
     @State private var score = 0
     @State private var questionNumber = 1
+    @State private var tappedFlag = -1
+    @State private var animationAmount = 0.0
+    @State private var offset = CGFloat.zero
+    @State private var opacity = 1.0
     
     
     struct FlagImage: View {
@@ -57,11 +61,28 @@ struct ContentView: View {
                     }
                     
                     ForEach(0..<3) { number in
+                        
                         Button {
+                            
+                     
                             flagtapped(number)
+                            
+                            withAnimation(.easeInOut(duration: 2)) {
+                               tappedFlag = number
+                               animationAmount += 360
+                               opacity -= 0.75
+                               offset += 50
+                            }
+                            
                         } label:{
                             FlagImage(flag: countries[number])
                         }
+                        .opacity(number == tappedFlag ? 1.0 : opacity)
+                        .offset(x: number == tappedFlag ? .zero : offset, y: .zero)
+                        .rotation3DEffect(.degrees(animationAmount), axis: (x: 0.0, y: number == tappedFlag ? 1 : 0, z: 0.0))
+
+
+                        
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -93,6 +114,7 @@ struct ContentView: View {
     }
     
     func flagtapped(_ number: Int) {
+        
         if number == correctAnswer {
             addScore(for: 1)
             scoreTitle = "Correct"
@@ -110,6 +132,9 @@ struct ContentView: View {
     }
     
     func askQuestion() {
+        offset = .zero
+        opacity = 1.0
+        animationAmount = 0
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
     }
