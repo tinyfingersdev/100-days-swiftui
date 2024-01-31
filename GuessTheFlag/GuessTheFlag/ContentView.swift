@@ -63,8 +63,6 @@ struct ContentView: View {
                     ForEach(0..<3) { number in
                         
                         Button {
-                            
-                     
                             flagtapped(number)
                             
                             withAnimation(.easeInOut(duration: 2)) {
@@ -77,9 +75,10 @@ struct ContentView: View {
                         } label:{
                             FlagImage(flag: countries[number])
                         }
+                        .rotation3DEffect(.degrees(animationAmount), axis: (x: 0.0, y: number == tappedFlag ? 1 : 0, z: 0.0))
                         .opacity(number == tappedFlag ? 1.0 : opacity)
                         .offset(x: number == tappedFlag ? .zero : offset, y: .zero)
-                        .rotation3DEffect(.degrees(animationAmount), axis: (x: 0.0, y: number == tappedFlag ? 1 : 0, z: 0.0))
+                        
 
 
                         
@@ -132,6 +131,7 @@ struct ContentView: View {
     }
     
     func askQuestion() {
+        tappedFlag = -1
         offset = .zero
         opacity = 1.0
         animationAmount = 0
